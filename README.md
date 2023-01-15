@@ -26,13 +26,13 @@ git clone https://github.com/cozycodegh/cordova-plugin-inapppurchases_DEMOAPP
 mv cordova-plugin-inapppurchases_DEMOAPP/* new_test_dir/
 ```
 6. Edit the `www/js/index.js` file to include your product ids and edit notifications:
-```
+```js
 var product_id_1 = "ca.cozycode.non_consumable_product";
 var enable_logging = true;
 var enable_alert_logging = true;
 ```
   *  For Android, also create a `www/manifest.json` file with the `base64 billing key` in this test project:
-```
+```js
 { "play_store_key": "<Base64-encoded public key from the Google Play Store>" }
 ```
 7. Run the demo app on different platforms:

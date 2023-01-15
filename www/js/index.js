@@ -49,7 +49,7 @@ function loadAppPurchases(){
             if (purchases[i]["productId"] == product_id_1){
                 //bought product_id_1
                 if (purchases[i]["pending"]) continue;
-                if (!purchases[i]["completed"]) inAppPurchase.completePurchase(purchases[i]["productId"]);
+                if (!purchases[i]["completed"]) inAppPurchases.completePurchase(purchases[i]["productId"]).catch(function(err){ logError(err); });;
                 givePaidContent();
             }
         }
@@ -60,14 +60,31 @@ function loadAppPurchases(){
         if (enable_logging && enable_alert_logging) enable_alert_logging = !confirm("Stop displaying error messages?");
     });
 }
-function onRestoreButtonPressOrUpdate(){
+function onRestoreUpdate(){
     inAppPurchases.restorePurchases().then( function(purchases){
         for (var i=0; i<purchases.length; i++){
             if (purchases[i]["pending"]) continue;
-            if (!purchases[i]["completed"]) inAppPurchase.completePurchase(purchases[i]["productId"]);
+            if (!purchases[i]["completed"]) inAppPurchases.completePurchase(purchases[i]["productId"])
+                .catch(function(err){ logError(err); });
             // handle purchases:
             if (purchases[i]["productId"] == product_id_1){
-                if (!checkPaidContent()) alert("restored purchase");
+                givePaidContent();
+            }
+        }
+    }).catch (function(err){
+        logError(err);
+        // view or handle billing or api error messages
+    });
+}
+function onRestoreButtonPress(){
+    inAppPurchases.restorePurchases().then( function(purchases){
+        for (var i=0; i<purchases.length; i++){
+            if (purchases[i]["pending"]) continue;
+            if (!purchases[i]["completed"]) inAppPurchases.completePurchase(purchases[i]["productId"])
+                .catch(function(err){ logError(err); });
+            // handle purchases:
+            if (purchases[i]["productId"] == product_id_1){
+                alert("restored purchase");
                 givePaidContent();
             }
         }
@@ -86,7 +103,7 @@ function buyPaidContent(){
         }
         // handle purchase here, or after its been completed:
         givePaidContent();
-        return inAppPurchase.completePurchase(purchase["productId"]);
+        return inAppPurchases.completePurchase(purchase["productId"]);
     }).then(function(purchase){
         // purchase is acknowledged and consumed
     }).catch (function(err){
@@ -123,11 +140,11 @@ function startInAppPurchasesDemo(){
     purchase.onclick = buyPaidContent;
     var restore = document.getElementById("restore_button");
     if (!restore){ alert("missing page element restore"); }
-    restore.onclick = onRestoreButtonPressOrUpdate;
+    restore.onclick = onRestoreButtonPress;
     //called from onDeviceReady
     loadAppPurchases();
     //onResume
-    document.addEventListener('resume', onRestoreButtonPressOrUpdate, false);
+    document.addEventListener('resume', onRestoreUpdate, false);
 }
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!

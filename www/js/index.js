@@ -97,7 +97,7 @@ function onRestoreButtonPress(){
 }
 function buyPaidContent(){
     inAppPurchases.purchase(product_id_1).then( function(purchase){
-        if (purchase[i]["pending"]){
+        if (purchase["pending"]){
             alert("waiting for payment to complete");
             return; //not paid for yet
         }
